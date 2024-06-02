@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analysis Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .result-container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .confidence {
+            color: #007bff;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="result-container">
+        {% if response_labels %}
+            <h1>Analysis Result - Labels</h1>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Confidence</th>
+                    <!-- Add more table headers for additional information if needed -->
+                </tr>
+                {% for label in response_labels.Labels %}
+                    <tr>
+                        <td>{{ label.Name }}</td>
+                        <td><span class="confidence">{{ label.Confidence }}</span></td>
+                        <!-- Add more table cells for additional information if needed -->
+                    </tr>
+                {% endfor %}
+            </table>
+        {% elif response_faces %}
+            <h1>Analysis Result - Faces</h1>
+            <table>
+                <tr>
+                    <th>Smile</th>
+                    <th>Beard</th>
+                    <th>Gender</th>
+                    <th>Age Range</th>
+                    <th>Eyeglasses</th>
+                    <!-- Add more table headers for additional information if needed -->
+                </tr>
+                {% for face in response_faces.FaceDetails %}
+                    <tr>
+                        <td>{{ face.Smile.Value if face.Smile else '' }}</td>
+                        <td>{{ face.get('Beard', {}).get('Confidence', '') }}</td>
+                        <td>{{ face.Gender.Value if face.Gender else '' }}</td>
+                        <td>{{ face.AgeRange.Low }} - {{ face.AgeRange.High }}</td>
+                        <td>{{ face.get('Eyeglasses', {}).get('Value', '') }}</td>
+                        <!-- Add more table cells for additional information if needed -->
+                    </tr>
+                {% endfor %}
+            </table>
+            
+        {% elif response_text %}
+            <h1>Analysis Result - Texts</h1>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Confidence</th>
+                    <!-- Add more table headers for additional information if needed -->
+                </tr>
+                {% for text in response_text.TextDetections %}
+                    <tr>
+                        <td>{{ text.DetectedText }}</td>
+                        <td><span class="confidence">{{ text.Confidence }}</span></td>
+                        <!-- Add more table cells for additional information if needed -->
+                    </tr>
+                {% endfor %}
+            </table>
+
+        {% elif response_celebrities %}
+            <h1>Analysis Result - Recognized_Celebrities</h1>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Confidence</th>
+                    <!-- Add more table headers for additional information if needed -->
+                </tr>
+                {% for celebrity in response_celebrities['CelebrityFaces'] %}
+                    <tr>
+                        <td>{{ celebrity.Name }}</td>
+                        <td><span class="confidence">{{ celebrity.Confidence }}</span></td>
+                        <!-- Add more table cells for additional information if needed -->
+                    </tr>
+                {% endfor %}
+            </table> 
+        {% endif %}
+        
+        
+    </div>
+</body>
+</html>

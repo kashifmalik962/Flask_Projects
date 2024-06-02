@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>XPath Extractor</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <style>
+        iframe {
+            width: 100%;
+            height: 90vh;
+        }
+    </style>
+    <script>
+        function getXPath(element) {
+            var xpath = '';
+            for (; element && element.nodeType == 1; element = element.parentNode) {
+                var id = $(element.parentNode).children(element.tagName).index(element) + 1;
+                id > 1 ? (id = '[' + id + ']') : (id = '');
+                xpath = '/' + element.tagName.toLowerCase() + id + xpath;
+            }
+            console.log(xpath)
+            return xpath;
+        }
+
+        function setupIframe() {
+            var iframe = document.getElementById('webpage');
+            iframe.addEventListener('load', function() {
+                var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                iframeDoc.body.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    var xpath = getXPath(event.target);
+                    if (xpath) {
+                        fetch('/save_xpath', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: 'xpath=' + encodeURIComponent(xpath)
+                        }).then(response => {
+                            if (response.ok) {
+                                console.log('Saved XPath')
+                            } else {
+                                console.log('Failed to save XPath');
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        function loadURL() {
+            var url = document.getElementById('url').value;
+            fetch('/load_url', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'url=' + encodeURIComponent(url)
+            }).then(response => response.json()).then(data => {
+                if (data.status === 'URL Loaded') {
+                    setTimeout(() => {
+                        fetch('/get_html').then(response => response.text()).then(html => {
+                            var iframe = document.getElementById('webpage');
+                            iframe.srcdoc = html;
+                        });
+                    }, 3000); // wait for the page to load completely
+                }
+            });
+        }
+    </script>
+</head>
+<body onload="setupIframe()">
+    <input type="text" id="url" placeholder="Enter URL" />
+    <button onclick="loadURL()">Load URL</button>
+    <iframe id="webpage" src=""></iframe>
+</body>
+</html>

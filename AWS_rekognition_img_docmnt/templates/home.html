@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Upload</title>
+    <link rel="stylesheet" href="static\home.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload an Image</h1>
+        <form action="/label" method="post" enctype="multipart/form-data">
+            <label for="file-upload">Select files to upload:</label>
+            <input type="file" name="file">
+            <label for="typeSelect">Choose the option type:</label>
+            <select name="action" id="typeSelect">
+                <option value="" disabled="disabled" selected="selected">Choose an Option</option>
+                <option value="option1">Detect_Labels</option>
+                <option value="option2">Detect_Faces</option>
+                <option value="option3">Detect_Text</option>
+                <option value="option3">Recognize_Celebrities</option>
+            </select>
+            <input type="submit" value="Upload">
+        </form>
+    </div>
+
+</body>
+</html>
