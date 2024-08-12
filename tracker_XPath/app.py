@@ -13,14 +13,11 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+
 @app.route('/load_url', methods=['POST'])
 def load_url():
-    # url = request.form['url']
-    # global driver
-    # driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-    # driver.get(url)
-    # return ""
-    return jsonify({'status': 'URL Loaded'}) 
+    return "index.html" 
+
 
 @app.route('/save_xpath', methods=['POST'])
 def save_xpath():
@@ -28,6 +25,7 @@ def save_xpath():
     with open('xpaths.txt', 'a') as file:
         file.write(f"{[xpath]},\n")
     return 'XPath saved', 200
+
 
 @app.route('/get_html', methods=['GET'])
 def get_html():
